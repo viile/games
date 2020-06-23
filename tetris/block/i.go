@@ -18,10 +18,10 @@ func (b BlockI) isUpright() bool {
 //(1,10) (1,9) (1,8) (1,7)  => (1,10) (2,10) (3,10) (4,10)
 func (b BlockI) sbh() Blocks {
 	o := b.Origin()
-	bps := make(Blocks,len(b.Blocks))
+	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o
-	for i :=1;i<=3;i++ {
-		bps[i] = Block{o.X + i,o.Y,false}
+	for i := 1; i <= 3; i++ {
+		bps[i] = Block{o.X + i, o.Y, false}
 	}
 	return bps
 }
@@ -29,14 +29,10 @@ func (b BlockI) sbh() Blocks {
 //(1,10) (2,10) (3,10) (4,10)  => (1,10) (1,9) (1,8) (1,7)
 func (b BlockI) hbs() Blocks {
 	o := b.Origin()
-	bps := make(Blocks,len(b.Blocks))
+	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o
-	for i :=1;i<=3;i++ {
-		bps[i] = Block{o.X ,o.Y-i,false}
+	for i := 1; i <= 3; i++ {
+		bps[i] = Block{o.X, o.Y - i, false}
 	}
 	return bps
 }
-
-
-
-

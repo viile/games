@@ -21,7 +21,7 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 			case termbox.KeyEsc:
 				g.Stop()
 				return
-			case termbox.KeyArrowUp,termbox.KeyArrowDown,termbox.KeyArrowLeft,termbox.KeyArrowRight:
+			case termbox.KeyArrowUp, termbox.KeyArrowDown, termbox.KeyArrowLeft, termbox.KeyArrowRight:
 				g.Input(int(ev.Key))
 			default:
 			}
@@ -29,7 +29,7 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 	}
 }
 
-func inputFromDebug(g *tetris.Game)  {
+func inputFromDebug(g *tetris.Game) {
 	for _ = range time.NewTicker(time.Second * 1).C {
 		g.Input(65517)
 	}
@@ -37,16 +37,15 @@ func inputFromDebug(g *tetris.Game)  {
 
 func main() {
 	defer func() {
-		if r := recover();r != nil {
+		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 
-
 	g := tetris.NewGame()
 	go g.Run()
 
-	if err := inputFromTermbox(g);err !=nil {
+	if err := inputFromTermbox(g); err != nil {
 		inputFromDebug(g)
 	}
 }
