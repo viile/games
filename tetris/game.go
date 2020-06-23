@@ -51,7 +51,7 @@ func NewGame() *Game {
 		stopChan:make(chan int),
 		locker: sync.Mutex{},
 	}
-	g.currBlock = block.BlockI{[]block.Block{block.Block{7,5,true},{8,5,false},{9,5,false},{10,5,false}}}
+	g.currBlock = block.BlockI{block.Te{[]block.Block{block.Block{7,5,true},{8,5,false},{9,5,false},{10,5,false}}}}
 
 	for w:=0;w<g.weight;w++ {
 		g.container[w] = make([]int,height)
@@ -150,7 +150,7 @@ func (g *Game) move(fn func() block.Blocks) {
 		return
 	}
 	g.clean(o)
-	g.currBlock = block.BlockI{s}
+	g.currBlock = block.BlockI{block.Te{s}}
 	g.write(s)
 }
 func (g *Game) rotate() {
