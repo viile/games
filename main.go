@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/nsf/termbox-go"
-	"github.com/viile/tetris/tetris"
+	"github.com/viile/games/tetris"
 	"log"
 	"math/rand"
 	"time"

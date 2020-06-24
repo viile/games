@@ -1,7 +1,7 @@
 package tetris
 
 import (
-	"github.com/viile/tetris/tetris/block"
+	"github.com/viile/games/tetris/block"
 	"log"
 	"math/rand"
 	"sync"

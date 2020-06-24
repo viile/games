@@ -1,4 +1,4 @@
-module github.com/viile/tetris
+module github.com/viile/games
 
 go 1.14
 
