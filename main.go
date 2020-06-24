@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/nsf/termbox-go"
 	"github.com/viile/tetris/tetris"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -37,24 +37,17 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 	}
 }
 
-func inputFromDebug(g *tetris.Game) {
-	for _ = range time.NewTicker(time.Second * 1).C {
-		g.Input(65517)
-	}
-}
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			log.Fatalln(r)
 		}
 	}()
 
 	g := tetris.NewGame()
 	go g.Run()
 
-	if err := inputFromTermbox(g); err != nil {
-		inputFromDebug(g)
-	}
+	log.Fatalln(inputFromTermbox(g))
 }
