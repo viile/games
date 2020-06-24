@@ -22,9 +22,16 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 			case termbox.KeyEsc:
 				g.Stop()
 				return
-			case termbox.KeyArrowUp, termbox.KeyArrowDown, termbox.KeyArrowLeft, termbox.KeyArrowRight:
-				g.Input(int(ev.Key))
+			case termbox.KeyArrowUp,termbox.KeyCtrlW:
+				g.Input(65517)
+			case termbox.KeyArrowDown,termbox.KeyCtrlS:
+				g.Input(65516)
+			case termbox.KeyArrowLeft,termbox.KeyCtrlA:
+				g.Input(65515)
+			case termbox.KeyArrowRight,termbox.KeyCtrlD:
+				g.Input(65514)
 			default:
+				continue
 			}
 		}
 	}
