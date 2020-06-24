@@ -28,9 +28,9 @@ func (b *BlockI) sbh() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o
-	for i := 1; i <= 3; i++ {
-		bps[i] = Block{o.X + i, o.Y, false}
-	}
+	bps[1] = Block{o.X+1,o.Y,false}
+	bps[2] = Block{o.X+2,o.Y,false}
+	bps[3] = Block{o.X+3,o.Y,false}
 	return bps
 }
 
@@ -39,8 +39,8 @@ func (b *BlockI) hbs() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o
-	for i := 1; i <= 3; i++ {
-		bps[i] = Block{o.X, o.Y - i, false}
-	}
+	bps[1] = Block{o.X,o.Y-1,false}
+	bps[2] = Block{o.X,o.Y-2,false}
+	bps[3] = Block{o.X,o.Y-3,false}
 	return bps
 }

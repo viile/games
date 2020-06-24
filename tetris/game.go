@@ -60,7 +60,6 @@ func (g *Game) Run() {
 	for {
 		select {
 		case <-g.stopChan:
-			print("stop.....\n")
 			return
 		case i := <-g.inputChan:
 			// 移动当前方块位置
