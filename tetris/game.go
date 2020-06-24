@@ -151,8 +151,8 @@ func (g *Game) move(fn func() block.Blocks) {
 	if g.cover(o, s) {
 		return
 	}
+	g.currBlock.Set(s)
 	g.clean(o)
-	g.currBlock = block.BlockI{block.Te{s}}
 	g.write(s)
 }
 func (g *Game) rotate() {
@@ -217,7 +217,7 @@ func (g *Game) calc() {
 func (g *Game) newBlock(){
 	w := g.weight / 2
 	h := g.height - 1
-	var b block.BlockI
+	var b block.Tetris
 	switch rand.Int31n(7) {
 	case BlockI:
 		b = block.NewBlockI(w,h)
@@ -233,9 +233,11 @@ func (g *Game) newBlock(){
 		b = block.NewBlockT(w,h)
 	case BlockZ:
 		b = block.NewBlockZ(w,h)
+	default:
+		b = block.NewBlockI(w,h)
 	}
 
-	for _, v := range b.Blocks {
+	for _, v := range b.Get() {
 		if g.container[v.X][v.Y] == 1 {
 			g.stopChan <- 1
 		}
