@@ -11,15 +11,15 @@ type BlockJ struct {
 	Te
 }
 
-func NewBlockJ(w,h int) BlockJ {
-	return BlockJ{Te{[]Block{
+func NewBlockJ(w,h int) *BlockJ {
+	return &BlockJ{Te{[]Block{
 		Block{w, h, true},
 		{w , h-1, false},
 		{w + 1, h-1, false},
 		{w + 2, h-1, false}}}}
 }
 
-func (b BlockJ) status() int {
+func (b *BlockJ) status() int {
 	if b.isu() {
 		return BlockJUp
 	} else if b.isd() {
@@ -32,7 +32,7 @@ func (b BlockJ) status() int {
 
 }
 
-func (b BlockJ) isu() bool {
+func (b *BlockJ) isu() bool {
 	o := b.Origin()
 	for _,v := range b.Blocks {
 		if o.X == v.X && o.Y == v.Y {
@@ -46,7 +46,7 @@ func (b BlockJ) isu() bool {
 	return true
 }
 
-func (b BlockJ) isd() bool {
+func (b *BlockJ) isd() bool {
 	o := b.Origin()
 	for _,v := range b.Blocks {
 		if o.X == v.X && o.Y == v.Y {
@@ -60,7 +60,7 @@ func (b BlockJ) isd() bool {
 	return true
 }
 
-func (b BlockJ) isl() bool {
+func (b *BlockJ) isl() bool {
 	o := b.Origin()
 	for _,v := range b.Blocks {
 		if o.X == v.X && o.Y == v.Y {
@@ -76,7 +76,7 @@ func (b BlockJ) isl() bool {
 // ▓▓       ▓▓▓▓  ▓▓▓▓▓▓     ▓▓
 // ▓▓▓▓▓▓   ▓▓        ▓▓     ▓▓
 //          ▓▓             ▓▓▓▓
-func (b BlockJ) br() Blocks {
+func (b *BlockJ) br() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = Block{o.X,o.Y,true}
@@ -86,7 +86,7 @@ func (b BlockJ) br() Blocks {
 	return bps
 }
 
-func (b BlockJ) bd() Blocks {
+func (b *BlockJ) bd() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = Block{o.X,o.Y,true}
@@ -96,7 +96,7 @@ func (b BlockJ) bd() Blocks {
 	return bps
 }
 
-func (b BlockJ) bl() Blocks {
+func (b *BlockJ) bl() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = Block{o.X,o.Y,true}
@@ -106,7 +106,7 @@ func (b BlockJ) bl() Blocks {
 	return bps
 }
 
-func (b BlockJ) bu() Blocks {
+func (b *BlockJ) bu() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = Block{o.X,o.Y,true}
@@ -116,7 +116,7 @@ func (b BlockJ) bu() Blocks {
 	return bps
 }
 
-func (b BlockJ) Rotate() Blocks {
+func (b *BlockJ) Rotate() Blocks {
 	switch b.status() {
 	case BlockJUp:
 		return b.br()

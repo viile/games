@@ -47,7 +47,7 @@ func NewGame() *Game {
 		container: make(map[int][]int, height),
 		inputChan: make(chan int),
 		hbChan:    make(chan int),
-		stopChan:  make(chan int),
+		stopChan:  make(chan int,1),
 		locker:    sync.Mutex{},
 	}
 	g.initContainer()
@@ -60,6 +60,7 @@ func (g *Game) Run() {
 	for {
 		select {
 		case <-g.stopChan:
+			print("stop.....\n")
 			return
 		case i := <-g.inputChan:
 			// 移动当前方块位置
@@ -145,7 +146,7 @@ func (g *Game) write(s block.Blocks) {
 		g.container[v.X][v.Y] = 1
 	}
 }
-func (g *Game) move(fn func() block.Blocks) {
+func (g *Game) move(fn func() block.Blocks)  {
 	o := g.currBlock.Get()
 	s := fn()
 	if g.cover(o, s) {
@@ -174,10 +175,15 @@ func (g *Game) right() {
 }
 func (g *Game) hb() {
 	defer g.lock()()
-	g.downBlcok()
+	// 每24帧,移动当前方块往下一格
+	if g.counter%24 == 0 {
+		g.move(g.currBlock.Down)
+	}
+	// 方块检测
 	if g.checkBlock() {
 		g.newBlock()
 	}
+	// 消行计算
 	g.calc()
 }
 
@@ -273,13 +279,6 @@ func (g *Game) checkBlock() bool{
 	}
 
 	return false
-}
-
-// 每24帧,移动当前方块往下一格
-func (g *Game) downBlcok() {
-	if g.counter%24 == 0 {
-		g.move(g.currBlock.Down)
-	}
 }
 
 func (g *Game) hbSender() {

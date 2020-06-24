@@ -45,31 +45,31 @@ type Te struct {
 	Blocks
 }
 
-func (b Te) Get() Blocks {
+func (b *Te) Get() Blocks {
 	return b.Blocks
 }
 
-func (b Te) Set(s Blocks) {
+func (b *Te) Set(s Blocks) {
 	b.Blocks = s
 }
 
-func (b Te) Rotate() Blocks {
+func (b *Te) Rotate() Blocks {
 	return b.Blocks
 }
 
-func (b Te) Left() Blocks {
+func (b *Te) Left() Blocks {
 	return b.Handle(func(v Block) Block {
 		return v.Move(-1, 0)
 	})
 }
 
-func (b Te) Right() Blocks {
+func (b *Te) Right() Blocks {
 	return b.Handle(func(v Block) Block {
 		return v.Move(1, 0)
 	})
 }
 
-func (b Te) Down() Blocks {
+func (b *Te) Down() Blocks {
 	return b.Handle(func(v Block) Block {
 		return v.Move(0, -1)
 	})
