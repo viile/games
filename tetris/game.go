@@ -3,6 +3,7 @@ package tetris
 import (
 	"github.com/viile/tetris/tetris/block"
 	"log"
+	"math/rand"
 	"sync"
 	"time"
 )
@@ -51,14 +52,8 @@ func NewGame() *Game {
 		stopChan:  make(chan int),
 		locker:    sync.Mutex{},
 	}
-	g.currBlock = block.BlockI{block.Te{[]block.Block{block.Block{7, 5, true}, {8, 5, false}, {9, 5, false}, {10, 5, false}}}}
-
-	for w := 0; w < g.weight; w++ {
-		g.container[w] = make([]int, height)
-		for h := 0; h < g.height; h++ {
-			g.container[w][h] = 0
-		}
-	}
+	g.initContainer()
+	g.newBlock()
 	return g
 }
 
@@ -89,6 +84,15 @@ func (g *Game) Run() {
 		}
 	}
 
+}
+
+func (g *Game) initContainer()  {
+	for w := 0; w < g.weight; w++ {
+		g.container[w] = make([]int, g.height)
+		for h := 0; h < g.height; h++ {
+			g.container[w][h] = 0
+		}
+	}
 }
 
 func (g *Game) debug() {
@@ -173,7 +177,9 @@ func (g *Game) right() {
 func (g *Game) hb() {
 	defer g.lock()()
 	g.downBlcok()
-	g.newBlock()
+	if g.checkBlock() {
+		g.newBlock()
+	}
 	g.calc()
 }
 
@@ -182,9 +188,62 @@ func (g *Game) calc() {
 
 }
 
-// 检查是否需要新的方块 .如果当前方块下方存在方块或边界.则需要新的方块
-func (g *Game) newBlock() {
+// 产生新的方块
+func (g *Game) newBlock(){
+	w := g.weight / 2
+	h := g.height - 1
+	var b block.BlockI
+	switch rand.Int31n(1) {
+	case BlockI:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w + 1, h, false},
+			{w + 2, h, false},
+			{w + 3, h, false}}}}
+	case BlockJ:
+	case BlockL:
+	case BlockO:
+	case BlockS:
+	case BlockT:
+	case BlockZ:
+	}
 
+	for _, v := range b.Blocks {
+		if g.container[v.X][v.Y] == 1 {
+			g.stopChan <- 1
+		}
+	}
+
+	g.currBlock = b
+}
+
+// 检查是否需要新的方块 .如果当前方块下方存在方块或边界
+func (g *Game) checkBlock() bool{
+	c := g.currBlock.Get()
+	for _,v := range c {
+		// 检测下方是否是边界
+		if v.Y -1 < 0 {
+			return true
+		}
+		// 检测下方是否是方块内部
+		fn := func() bool {
+			for _, vv := range c {
+				if vv.X == v.X && vv.Y == v.Y - 1 {
+					return true
+				}
+			}
+			return false
+		}
+		if fn() {
+			continue
+		}
+		// 检测下方是否存在其他方块
+		if g.container[v.X][v.Y-1] == 1 {
+			return true
+		}
+	}
+
+	return false
 }
 
 // 每24帧,移动当前方块往下一格

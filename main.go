@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/nsf/termbox-go"
 	"github.com/viile/tetris/tetris"
+	"math/rand"
 	"time"
 )
 
@@ -36,6 +37,7 @@ func inputFromDebug(g *tetris.Game) {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(r)
