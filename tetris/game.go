@@ -193,7 +193,7 @@ func (g *Game) newBlock(){
 	w := g.weight / 2
 	h := g.height - 1
 	var b block.BlockI
-	switch rand.Int31n(1) {
+	switch rand.Int31n(7) {
 	case BlockI:
 		b = block.BlockI{block.Te{[]block.Block{
 			block.Block{w, h, true},
@@ -201,11 +201,41 @@ func (g *Game) newBlock(){
 			{w + 2, h, false},
 			{w + 3, h, false}}}}
 	case BlockJ:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w , h-1, false},
+			{w + 1, h-1, false},
+			{w + 2, h-1, false}}}}
 	case BlockL:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w , h -1, false},
+			{w -1, h-1, false},
+			{w -2, h-1, false}}}}
 	case BlockO:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w + 1, h, false},
+			{w , h-1, false},
+			{w + 1, h-1, false}}}}
 	case BlockS:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w - 1, h, false},
+			{w - 1, h-1, false},
+			{w - 2, h-1, false}}}}
 	case BlockT:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w - 1, h-1, false},
+			{w , h-1, false},
+			{w + 1, h-1, false}}}}
 	case BlockZ:
+		b = block.BlockI{block.Te{[]block.Block{
+			block.Block{w, h, true},
+			{w + 1, h, false},
+			{w + 1, h-1, false},
+			{w + 2, h-1, false}}}}
 	}
 
 	for _, v := range b.Blocks {
