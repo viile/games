@@ -1,7 +1,10 @@
 # tetris
-##golang实现的运行在终端上的俄罗斯方块
+####golang实现的运行在终端上的俄罗斯方块
 
+#安装
+> go install github.com/viile/tetris
 
+#执行
 * 按**ctrl+w**或**方向键上** 旋转方块
 * 按**ctrl+s**或**方向键下** 加速下落方块
 * 按**ctrl+a**或**方向键左** 往左移动方块
