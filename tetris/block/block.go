@@ -41,7 +41,7 @@ func (s Blocks) Origin() Block {
 		}
 	}
 
-	return s[0]
+	return Block{s[0].X,s[0].Y,true}
 }
 
 type Tetris interface {

@@ -13,18 +13,18 @@ func NewBlockI(w,h int) *BlockI {
 }
 
 func (b *BlockI) Rotate() Blocks {
-	if b.isUpright() {
-		return b.sbh()
+	if b.iss() {
+		return b.bh()
 	}
-	return b.hbs()
+	return b.bs()
 }
 
-func (b *BlockI) isUpright() bool {
+func (b *BlockI) iss() bool {
 	return b.Blocks[0].X == b.Blocks[1].X
 }
 
 //(1,10) (1,9) (1,8) (1,7)  => (1,10) (2,10) (3,10) (4,10)
-func (b *BlockI) sbh() Blocks {
+func (b *BlockI) bh() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o
@@ -35,7 +35,7 @@ func (b *BlockI) sbh() Blocks {
 }
 
 //(1,10) (2,10) (3,10) (4,10)  => (1,10) (1,9) (1,8) (1,7)
-func (b *BlockI) hbs() Blocks {
+func (b *BlockI) bs() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
 	bps[0] = o

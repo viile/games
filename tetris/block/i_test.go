@@ -12,9 +12,9 @@ func TestBlockI_Rotate(t *testing.T) {
 		{9, 5, false},
 		{10, 5, false}}}}
 
-	assert.Equal(t, i.isUpright(), false, "isUpright")
+	assert.Equal(t, i.iss(), false, "iss")
 
-	t.Log(i.hbs())
+	t.Log(i.bs())
 
 	i = BlockI{Te{[]Block{
 		{7, 5, true},
@@ -22,6 +22,6 @@ func TestBlockI_Rotate(t *testing.T) {
 		{7, 3, false},
 		{7, 2, false}}}}
 
-	assert.Equal(t, i.isUpright(), true, "isUpright")
-	t.Log(i.sbh())
+	assert.Equal(t, i.iss(), true, "iss")
+	t.Log(i.bh())
 }
