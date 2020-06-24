@@ -2,7 +2,6 @@ package tetris
 
 import (
 	"github.com/viile/games/tetris/block"
-	"log"
 	"sync"
 	"time"
 )
@@ -92,11 +91,6 @@ func (g *Game) initContainer()  {
 	}
 }
 
-func (g *Game) debug() {
-	for _, v := range g.container {
-		log.Println(v)
-	}
-}
 func (g *Game) display() {
 	display(g.currScore,g.weight, g.height, g.container)
 }
