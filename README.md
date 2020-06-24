@@ -1,6 +1,8 @@
 # tetris
-#####golang实现的运行在终端上的俄罗斯方块
-#####Tetris game running on the terminal Implemented with golang
+
+golang实现的运行在终端上的俄罗斯方块
+
+Tetris game running on the terminal Implemented with golang
 
 #安装(INSTALLING)
 > go install github.com/viile/tetris
