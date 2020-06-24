@@ -4,6 +4,14 @@ type BlockI struct {
 	Te
 }
 
+func NewBlockI(w,h int) BlockI {
+	return BlockI{Te{[]Block{
+		Block{w, h, true},
+		{w + 1, h, false},
+		{w + 2, h, false},
+		{w + 3, h, false}}}}
+}
+
 func (b BlockI) Rotate() Blocks {
 	if b.isUpright() {
 		return b.sbh()

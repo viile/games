@@ -26,8 +26,6 @@ type Game struct {
 	//
 	currScore int
 	//
-	maxScore int
-	//
 	status int
 	//
 	counter int
@@ -101,7 +99,7 @@ func (g *Game) debug() {
 	}
 }
 func (g *Game) display() {
-	display(g.weight, g.height, g.container)
+	display(g.currScore,g.weight, g.height, g.container)
 }
 
 func (g *Game) lock() func() {
@@ -185,7 +183,34 @@ func (g *Game) hb() {
 
 // 计算是否需要消除x行
 func (g *Game) calc() {
+	for h := 0; h < g.height; h++ {
+		fn := func() bool {
 
+			for w := 0; w < g.weight; w++ {
+				if g.container[w][h] == 0 {
+					return false
+				}
+			}
+			return true
+		}
+
+		if fn() {
+			g.currScore++
+			// 消除一行,并下移所有方块
+			for hh := h; hh < g.height; hh++ {
+				for ww := 0; ww < g.weight; ww++ {
+					if hh +1 < g.height {
+						g.container[ww][hh] = g.container[ww][hh+1]
+					}else {
+						g.container[ww][hh] = 0
+					}
+				}
+			}
+
+
+			h--
+		}
+	}
 }
 
 // 产生新的方块
@@ -195,47 +220,19 @@ func (g *Game) newBlock(){
 	var b block.BlockI
 	switch rand.Int31n(7) {
 	case BlockI:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w + 1, h, false},
-			{w + 2, h, false},
-			{w + 3, h, false}}}}
+		b = block.NewBlockI(w,h)
 	case BlockJ:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w , h-1, false},
-			{w + 1, h-1, false},
-			{w + 2, h-1, false}}}}
+		b = block.NewBlockJ(w,h)
 	case BlockL:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w , h -1, false},
-			{w -1, h-1, false},
-			{w -2, h-1, false}}}}
+		b = block.NewBlockL(w,h)
 	case BlockO:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w + 1, h, false},
-			{w , h-1, false},
-			{w + 1, h-1, false}}}}
+		b = block.NewBlockO(w,h)
 	case BlockS:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w - 1, h, false},
-			{w - 1, h-1, false},
-			{w - 2, h-1, false}}}}
+		b = block.NewBlockS(w,h)
 	case BlockT:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w - 1, h-1, false},
-			{w , h-1, false},
-			{w + 1, h-1, false}}}}
+		b = block.NewBlockT(w,h)
 	case BlockZ:
-		b = block.BlockI{block.Te{[]block.Block{
-			block.Block{w, h, true},
-			{w + 1, h, false},
-			{w + 1, h-1, false},
-			{w + 2, h-1, false}}}}
+		b = block.NewBlockZ(w,h)
 	}
 
 	for _, v := range b.Blocks {

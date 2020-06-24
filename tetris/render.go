@@ -1,6 +1,8 @@
 package tetris
 
-func display(x, y int, container map[int][]int) {
+import "fmt"
+
+func display(score,x, y int, container map[int][]int) {
 	var str string
 	str += "\033c"
 	for h := y - 1; h >= 0; h-- {
@@ -14,5 +16,6 @@ func display(x, y int, container map[int][]int) {
 		}
 		str += "|\n"
 	}
+	str += fmt.Sprintf("current score %d \n",score)
 	print(str)
 }
