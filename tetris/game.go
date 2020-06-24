@@ -3,7 +3,6 @@ package tetris
 import (
 	"github.com/viile/games/tetris/block"
 	"log"
-	"math/rand"
 	"sync"
 	"time"
 )
@@ -220,27 +219,7 @@ func (g *Game) calc() {
 
 // 产生新的方块
 func (g *Game) newBlock(){
-	w := g.weight / 2
-	h := g.height - 1
-	var b block.Tetris
-	switch rand.Int31n(7) {
-	case BlockI:
-		b = block.NewBlockI(w,h)
-	case BlockJ:
-		b = block.NewBlockJ(w,h)
-	case BlockL:
-		b = block.NewBlockL(w,h)
-	case BlockO:
-		b = block.NewBlockO(w,h)
-	case BlockS:
-		b = block.NewBlockS(w,h)
-	case BlockT:
-		b = block.NewBlockT(w,h)
-	case BlockZ:
-		b = block.NewBlockZ(w,h)
-	default:
-		b = block.NewBlockI(w,h)
-	}
+	var b = block.NewBlock(g.weight / 2,g.height - 1)
 
 	for _, v := range b.Get() {
 		if g.container[v.X][v.Y] == 1 {

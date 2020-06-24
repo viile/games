@@ -1,5 +1,17 @@
 package block
 
+import "math/rand"
+
+const (
+	blockI = iota
+	blockJ
+	blockL
+	blockO
+	blockS
+	blockT
+	blockZ
+)
+
 type Block struct {
 	X, Y     int
 	IsOrigin bool
@@ -73,4 +85,28 @@ func (b *Te) Down() Blocks {
 	return b.Handle(func(v Block) Block {
 		return v.Move(0, -1)
 	})
+}
+
+func NewBlock(w,h int) Tetris {
+	var b Tetris
+	switch rand.Int31n(7) {
+	case blockI:
+		b = NewBlockI(w,h)
+	case blockJ:
+		b = NewBlockJ(w,h)
+	case blockL:
+		b = NewBlockL(w,h)
+	case blockO:
+		b = NewBlockO(w,h)
+	case blockS:
+		b = NewBlockS(w,h)
+	case blockT:
+		b = NewBlockT(w,h)
+	case blockZ:
+		b = NewBlockZ(w,h)
+	default:
+		b = NewBlockI(w,h)
+	}
+
+	return b
 }
