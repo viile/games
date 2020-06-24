@@ -10,7 +10,9 @@ const (
 type BlockJ struct {
 	Te
 }
-
+// ▓▓       ▓▓▓▓  ▓▓▓▓▓▓     ▓▓
+// ▓▓▓▓▓▓   ▓▓        ▓▓     ▓▓
+//          ▓▓             ▓▓▓▓
 func NewBlockJ(w,h int) *BlockJ {
 	return &BlockJ{Te{[]Block{
 		Block{w, h, true},
@@ -73,9 +75,7 @@ func (b *BlockJ) isl() bool {
 
 	return true
 }
-// ▓▓       ▓▓▓▓  ▓▓▓▓▓▓     ▓▓
-// ▓▓▓▓▓▓   ▓▓        ▓▓     ▓▓
-//          ▓▓             ▓▓▓▓
+
 func (b *BlockJ) br() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
