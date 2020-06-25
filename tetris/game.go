@@ -138,15 +138,16 @@ func (g *Game) write(s block.Blocks) {
 		g.container[v.X][v.Y] = 1
 	}
 }
-func (g *Game) move(fn func() block.Blocks)  {
+func (g *Game) move(fn func() block.Blocks) bool {
 	o := g.currBlock.Get()
 	s := fn()
 	if g.cover(o, s) {
-		return
+		return false
 	}
 	g.currBlock.Set(s)
 	g.clean(o)
 	g.write(s)
+	return true
 }
 func (g *Game) rotate() {
 	defer g.lock()()
@@ -169,11 +170,12 @@ func (g *Game) hb() {
 	defer g.lock()()
 	// 每24帧,移动当前方块往下一格
 	if g.counter%24 == 0 {
-		g.move(g.currBlock.Down)
-	}
-	// 方块检测
-	if g.checkBlock() {
-		g.newBlock()
+		if !g.move(g.currBlock.Down) {
+			// 方块无法继续下降时,再进行新方块检测
+			if g.checkBlock() {
+				g.newBlock()
+			}
+		}
 	}
 	// 消行计算
 	g.calc()
@@ -261,6 +263,19 @@ func (g *Game) hbSender() {
 
 func (g *Game) Input(i int) {
 	g.inputChan <- i
+}
+
+func (g *Game) InputUp() {
+	g.inputChan <- 65517
+}
+func (g *Game) InputDown() {
+	g.inputChan <- 65516
+}
+func (g *Game) InputLeft() {
+	g.inputChan <- 65515
+}
+func (g *Game) InputRight() {
+	g.inputChan <- 65514
 }
 
 func (g *Game) Stop() {

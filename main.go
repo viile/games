@@ -19,17 +19,28 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			switch ev.Key {
+			case 0:
+				switch ev.Ch {
+				case 'w','W':
+					g.InputUp()
+				case 's','S':
+					g.InputDown()
+				case 'a','A':
+					g.InputLeft()
+				case 'd','D':
+					g.InputRight()
+				}
 			case termbox.KeyEsc:
 				g.Stop()
 				return
 			case termbox.KeyArrowUp,termbox.KeyCtrlW:
-				g.Input(65517)
+				g.InputUp()
 			case termbox.KeyArrowDown,termbox.KeyCtrlS:
-				g.Input(65516)
+				g.InputDown()
 			case termbox.KeyArrowLeft,termbox.KeyCtrlA:
-				g.Input(65515)
+				g.InputLeft()
 			case termbox.KeyArrowRight,termbox.KeyCtrlD:
-				g.Input(65514)
+				g.InputRight()
 			default:
 				continue
 			}
