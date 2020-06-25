@@ -2,12 +2,14 @@ package main
 
 import (
 	"github.com/nsf/termbox-go"
-	"github.com/viile/games/tetris"
+	"github.com/viile/games/common"
+	"github.com/viile/games/snake"
+	//"github.com/viile/games/tetris"
 	"math/rand"
 	"time"
 )
 
-func inputFromTermbox(g *tetris.Game) (err error) {
+func inputFromTermbox(g common.Game) (err error) {
 	err = termbox.Init()
 	if err != nil {
 		return
@@ -21,25 +23,25 @@ func inputFromTermbox(g *tetris.Game) (err error) {
 			case 0:
 				switch ev.Ch {
 				case 'w','W':
-					g.InputUp()
+					g.Input(65517)
 				case 's','S':
-					g.InputDown()
+					g.Input(65516)
 				case 'a','A':
-					g.InputLeft()
+					g.Input(65515)
 				case 'd','D':
-					g.InputRight()
+					g.Input(65514)
 				}
 			case termbox.KeyEsc:
 				g.Stop()
 				return
 			case termbox.KeyArrowUp,termbox.KeyCtrlW:
-				g.InputUp()
+				g.Input(65517)
 			case termbox.KeyArrowDown,termbox.KeyCtrlS:
-				g.InputDown()
+				g.Input(65516)
 			case termbox.KeyArrowLeft,termbox.KeyCtrlA:
-				g.InputLeft()
+				g.Input(65515)
 			case termbox.KeyArrowRight,termbox.KeyCtrlD:
-				g.InputRight()
+				g.Input(65514)
 			default:
 				continue
 			}
@@ -56,8 +58,9 @@ func main() {
 		}
 	}()
 
-	g := tetris.NewGame()
+	g := snake.NewGame()
 	go g.Run()
 
-	_ = inputFromTermbox(g)
+	println(inputFromTermbox(g))
+
 }
