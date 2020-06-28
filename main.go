@@ -6,8 +6,6 @@ import (
 	"github.com/viile/games/common"
 	"github.com/viile/games/snake"
 	"github.com/viile/games/tetris"
-
-	//"github.com/viile/games/tetris"
 	"math/rand"
 	"time"
 )
