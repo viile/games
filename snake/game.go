@@ -2,238 +2,136 @@ package snake
 
 import (
 	"container/list"
-	"math/rand"
-	"sync"
-	"time"
+	"github.com/viile/games/common"
 )
-
-const (
-	PointZero = iota
-	PointSnake
-	PointFruit
-)
-
-const (
-	DirectUp = iota
-	DirectDown
-	DirectLeft
-	DirectRight
-)
-
-type Pos struct {
-	X, Y int
-}
 
 type Game struct {
-	// y
-	height int
-	// x
-	weight int
-	//
-	container map[int][]int
+	*common.G
 	//
 	snake *list.List
 	//
-	currPoint Pos
+	currPoint common.Pos
 	//
 	currDirect int
 	//
-	counter int
-	//
-	inputChan chan int
-	//
-	hbChan chan int
-	//
-	stopChan chan int
-	// locker
-	locker sync.Mutex
+	lastMoveCounter int
 }
 
 func NewGame() *Game {
-	var weight, height = 16, 12
 	g := &Game{
-		height:    height,
-		weight:    weight,
-		container: make(map[int][]int, height),
+		G:common.NewG(16,12),
 		snake: list.New(),
-		inputChan: make(chan int),
-		hbChan:    make(chan int),
-		stopChan:  make(chan int,8),
-		locker:    sync.Mutex{},
 	}
-	g.initContainer()
+
 	g.newSnake()
 	g.newFruit()
 	return g
 }
 
-func (g *Game) initContainer()  {
-	for w := 0; w < g.weight; w++ {
-		g.container[w] = make([]int, g.height)
-		for h := 0; h < g.height; h++ {
-			g.container[w][h] = PointZero
-		}
-	}
-}
 
 func (g *Game) newSnake()  {
-	var w,h = g.weight / 2,g.height / 2
-	g.snake.PushBack(Pos{w+1,h})
-	g.snake.PushFront(Pos{w,h})
-	g.currDirect = DirectLeft
+	var p = g.CenterPoint()
+	g.snake.PushBack(common.NewPos(p.X+1,p.Y))
+	g.snake.PushFront(common.NewPos(p.X,p.Y))
+	g.currDirect = common.DirectLeft
 	for e := g.snake.Front(); e != nil; e = e.Next() {
-		p := e.Value.(Pos)
-		g.container[p.X][p.Y] = PointSnake
+		g.Set(e.Value.(common.Pos),PointSnake{})
 	}
 }
 
 func (g *Game) newFruit()  {
-	var w, h = rand.Intn(g.weight), rand.Intn(g.height)
-	if g.container[w][h] == PointZero {
-		g.container[w][h] = PointFruit
+	var p = g.RandPoint()
+
+	if g.Get(p).Value() == PointValue {
+		g.Set(p,PointFruit{})
 		return
 	}
-	for m:=0;m<g.weight;m++ {
-		for n := 0; n < g.height; n++ {
-			if g.container[w][h] == PointZero {
-				g.container[w][h] = PointFruit
-				return
-			}
-		}
+
+	if g.Each(func(p common.Pos) bool {
+		return g.Get(p).Value() == PointValue
+	}) {
+		g.Set(p,PointFruit{})
+		return
 	}
 
-	g.stopChan <- 1
+	g.Stop()
 }
-func (g *Game) up()  {
-	defer g.lock()()
-	if g.currDirect != DirectDown {
-		g.currDirect = DirectUp
-	}
-	g.move()
-}
-func (g *Game) down()  {
-	defer g.lock()()
-	if g.currDirect != DirectUp {
-		g.currDirect = DirectDown
-	}
-	g.move()
-}
-func (g *Game) left()  {
-	defer g.lock()()
-	if g.currDirect != DirectRight {
-		g.currDirect = DirectLeft
-	}
-	g.move()
-}
-func (g *Game) right()  {
-	defer g.lock()()
-	if g.currDirect != DirectLeft {
-		g.currDirect = DirectRight
-	}
-	g.move()
-}
+
 func (g *Game) move() {
-	header := g.snake.Front().Value.(Pos)
+	header := g.snake.Front().Value.(common.Pos)
 	tail := g.snake.Back()
-	var p Pos
+	var p common.Pos
 	switch g.currDirect {
-	case DirectUp:
-		p = Pos{header.X,header.Y + 1}
-	case DirectDown:
-		p = Pos{header.X,header.Y - 1}
-	case DirectLeft:
-		p = Pos{header.X - 1,header.Y }
-	case DirectRight:
-		p = Pos{header.X + 1,header.Y }
+	case common.DirectUp:
+		p = common.NewPos(header.X,header.Y + 1)
+	case common.DirectDown:
+		p = common.NewPos(header.X,header.Y - 1)
+	case common.DirectLeft:
+		p = common.NewPos(header.X - 1,header.Y )
+	case common.DirectRight:
+		p = common.NewPos(header.X + 1,header.Y )
 	}
-
-	if p.X < 0 || p.X >= g.weight || p.Y < 0 || p.Y >= g.height {
+	if g.Overflow(p) {
 		g.Stop()
 		return
 	}
 
-	if g.container[p.X][p.Y] == PointSnake {
+	switch g.Get(p).Value() {
+	case PointSnakeValue:
 		g.Stop()
 		return
-	}
-
-	if g.container[p.X][p.Y] == PointZero {
+	case PointValue:
 		g.snake.PushFront(p)
+		g.Set(p, PointSnake{})
 		g.snake.Remove(tail)
-		g.container[p.X][p.Y] = PointSnake
-		t := tail.Value.(Pos)
-		g.container[t.X][t.Y] = PointZero
-		return
-	}
-
-	if g.container[p.X][p.Y] == PointFruit {
+		g.Set(tail.Value.(common.Pos), common.P{})
+	case PointFruitValue:
 		g.snake.PushFront(p)
-		g.container[p.X][p.Y] = PointSnake
+		g.Set(p, PointSnake{})
 		g.newFruit()
-		return
 	}
-
 	return
 }
 
-func (g *Game)Stop(){
-	g.stopChan <- 1
-}
-func (g *Game)Input(i int){
-	g.inputChan <- i
-}
-
-func (g *Game) Run() {
-	go g.hbSender()
-	for {
-		select {
-		case <-g.stopChan:
-			println("stop..")
+func (g *Game) InputEvent(i int) {
+	if !g.Running() {
+		return
+	}
+	defer g.Lock()()
+	switch i {
+	case common.DirectUp:
+		if g.currDirect == common.DirectDown {
 			return
-		case i := <-g.inputChan:
-			// 移动当前方块位置
-			switch i {
-			case 65517:
-				g.up()
-			case 65516:
-				g.down()
-			case 65515:
-				g.left()
-			case 65514:
-				g.right()
-			}
-		case <-g.hbChan:
-			// 移动位置,计算积分
-			// 刷新屏幕
-			g.counter++
-			g.hb()
-			g.display()
+		}
+	case common.DirectDown:
+		if g.currDirect == common.DirectUp {
+			return
+		}
+	case common.DirectLeft:
+		if g.currDirect == common.DirectRight {
+			return
+		}
+	case common.DirectRight:
+		if g.currDirect == common.DirectLeft {
+			return
 		}
 	}
-
+	g.currDirect = i
+	g.lastMoveCounter = g.Counter()
+	g.move()
 }
 
-func (g *Game) lock() func() {
-	g.locker.Lock()
-	return func() {
-		g.locker.Unlock()
+func (g *Game) HeartbeatEvent() {
+	if !g.Running() {
+		return
 	}
-}
-
-func (g *Game) hb() {
-	defer g.lock()()
+	defer g.Lock()()
+	g.AddCounter()
 	// 每24帧,移动一格
-	if g.counter%24 == 0 {
+	if g.Counter() - g.lastMoveCounter > 12 && g.Counter()%24 == 0 {
 		g.move()
 	}
+	// 刷新屏幕
+	g.Display()
 }
 
-func (g *Game) display() {
-	display(g.weight, g.height, g.container)
-}
-
-func (g *Game) hbSender() {
-	for _ = range time.NewTicker(time.Millisecond * 50).C {
-		g.hbChan <- 1
-	}
-}

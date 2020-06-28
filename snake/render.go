@@ -1,20 +1,28 @@
 package snake
 
-func display(x, y int, container map[int][]int) {
-	var str string
-	str += "\033c"
-	for h := y - 1; h >= 0; h-- {
-		str += "|"
-		for w := 0; w < x; w++ {
-			if container[w][h] == PointSnake {
-				str += "🐍"
-			} else if container[w][h] == PointFruit {
-				str += "🍎"
-			} else {
-				str += "  "
-			}
-		}
-		str += "|\n"
-	}
-	print(str)
+const (
+	PointValue = iota
+	PointSnakeValue
+	PointFruitValue
+)
+
+type PointSnake struct {
 }
+
+func (p PointSnake) Render() string {
+	return "🐍"
+}
+func (p PointSnake) Value() int {
+	return PointSnakeValue
+}
+
+type PointFruit struct {
+}
+
+func (p PointFruit) Render() string {
+	return "🍎"
+}
+func (p PointFruit) Value() int {
+	return PointFruitValue
+}
+
