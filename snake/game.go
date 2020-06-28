@@ -13,6 +13,8 @@ type Game struct {
 	currPoint common.Pos
 	//
 	currDirect int
+	//
+	lastMoveCounter int
 }
 
 func NewGame() *Game {
@@ -115,6 +117,7 @@ func (g *Game) InputEvent(i int) {
 		}
 	}
 	g.currDirect = i
+	g.lastMoveCounter = g.Counter()
 	g.move()
 }
 
@@ -125,7 +128,7 @@ func (g *Game) HeartbeatEvent() {
 	defer g.Lock()()
 	g.AddCounter()
 	// 每24帧,移动一格
-	if g.Counter()%24 == 0 {
+	if g.Counter() - g.lastMoveCounter > 12 && g.Counter()%24 == 0 {
 		g.move()
 	}
 	// 刷新屏幕

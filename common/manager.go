@@ -20,7 +20,7 @@ func NewManager() *Manager{
 		heartbeat:time.Millisecond * 50,
 		inputChan: make(chan int),
 		hbChan:    make(chan int),
-		stopChan:  make(chan int,1),
+		stopChan:  make(chan int,8),
 	}
 }
 

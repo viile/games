@@ -112,23 +112,32 @@ func (g *G) Lock() func() {
 func (g *G) Display() {
 	var str string
 	str += "\033c"
+	//
 	str += " "
 	for w := 0; w < g.Weight(); w++ {
 		str += "--"
 	}
 	str += "\n"
+	//
+	var m = g.Height() / 2
 	for h := g.Height() - 1; h >= 0; h-- {
-		str += "|"
-		for w := 0; w < g.Weight(); w++ {
-			str += g.Get(NewPos(w,h)).Render()
+		if !g.Running() && h == m {
+			str += "        GAMEOVER\n   press <esc> exit game\n"
+		}else {
+			str += "|"
+			for w := 0; w < g.Weight(); w++ {
+				str += g.Get(NewPos(w, h)).Render()
+			}
+			str += "|\n"
 		}
-		str += "|\n"
 	}
+	//
 	str += " "
 	for w := 0; w < g.Weight(); w++ {
 		str += "--"
 	}
 	str += "\n"
+	//
 	print(str)
 }
 
@@ -136,6 +145,7 @@ func (g *G) Run() {
 }
 func (g *G) Stop() {
 	g.status = StatusStop
+	g.Display()
 }
 func (g *G) InputEvent(i int) {
 }

@@ -62,7 +62,7 @@ func main() {
 		m := common.NewManager()
 		var g common.Game
 		var i int
-		println("Terminal Games \n enter '1' start tetris \n enter '2' start snake")
+		println("\033cTerminal Games \n enter '1' start tetris \n enter '2' start snake")
 		_,err := fmt.Scanln(&i)
 		if err != nil {
 			continue
