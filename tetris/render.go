@@ -9,7 +9,7 @@ type PointBlock struct {
 }
 
 func (p PointBlock) Render() string {
-	return "▓▓"
+	return "⬛️"
 }
 func (p PointBlock) Value() int {
 	return 1
