@@ -20,9 +20,9 @@ type G struct {
 	weight int
 	// 屏幕容器
 	container map[int][]int
-	// 心跳总计
+	// 帧数总计
 	counter int
-	// 刷新间隔,建议50ms
+	// 每帧间隔,建议50ms
 	heartbeat time.Duration
 	// 按键输入事件
 	inputChan chan int
