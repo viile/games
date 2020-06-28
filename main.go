@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/nsf/termbox-go"
 	"github.com/viile/games/common"
@@ -34,6 +35,9 @@ func inputFromTermbox(m *common.Manager) (err error) {
 				}
 			case termbox.KeyEsc:
 				m.Stop()
+				return
+			case termbox.KeyCtrlC:
+				err = errors.New("CtrlC exit game")
 				return
 			case termbox.KeyArrowUp,termbox.KeyCtrlW:
 				m.Input(common.DirectUp)
@@ -78,7 +82,9 @@ func main() {
 
 		go m.Run(g)
 
-		println(inputFromTermbox(m))
+		if err := inputFromTermbox(m);err != nil {
+			return
+		}
 	}
 
 }

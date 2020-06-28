@@ -113,12 +113,6 @@ func (g *G) Display() {
 	var str string
 	str += "\033c"
 	//
-	str += " "
-	for w := 0; w < g.Weight(); w++ {
-		str += "--"
-	}
-	str += "\n"
-	//
 	var m = g.Height() / 2
 	for h := g.Height() - 1; h >= 0; h-- {
 		if !g.Running() && h == m {
@@ -131,12 +125,6 @@ func (g *G) Display() {
 			str += "|\n"
 		}
 	}
-	//
-	str += " "
-	for w := 0; w < g.Weight(); w++ {
-		str += "--"
-	}
-	str += "\n"
 	//
 	print(str)
 }

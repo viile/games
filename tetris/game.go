@@ -1,117 +1,49 @@
 package tetris
 
 import (
+	"fmt"
+	"github.com/viile/games/common"
 	"github.com/viile/games/tetris/block"
-	"sync"
-	"time"
 )
 
-type Pos struct {
-	X, Y int
-}
-
 type Game struct {
-	// y
-	height int
-	// x
-	weight int
-	//
-	container map[int][]int
+	*common.G
 	//
 	currBlock block.Tetris
 	//
 	nextBlock int
 	//
 	currScore int
-	//
-	status int
-	//
-	counter int
-	//
-	inputChan chan int
-	//
-	hbChan chan int
-	//
-	stopChan chan int
-	// locker
-	locker sync.Mutex
 }
 
 func NewGame() *Game {
-	var weight, height = 12, 16
 	g := &Game{
-		height:    height,
-		weight:    weight,
-		container: make(map[int][]int, height),
-		inputChan: make(chan int),
-		hbChan:    make(chan int),
-		stopChan:  make(chan int,1),
-		locker:    sync.Mutex{},
+		G:common.NewG(16,12),
 	}
-	g.initContainer()
 	g.newBlock()
 	return g
 }
 
 func (g *Game) InputEvent(i int) {
+	defer g.Lock()()
 	switch i {
-	case 65517:
-		g.rotate()
-	case 65516:
-		g.down()
-	case 65515:
-		g.left()
-	case 65514:
-		g.right()
-	}
-}
-
-func (g *Game) Run() {
-	go g.hbSender()
-	for {
-		select {
-		case <-g.stopChan:
-			return
-		case i := <-g.inputChan:
-			// 移动当前方块位置
-			g.InputEvent(i)
-		case <-g.hbChan:
-			// 移动位置,计算积分
-			// 刷新屏幕
-			g.counter++
-			g.HeartbeatEvent()
-			g.display()
-		}
-	}
-
-}
-
-func (g *Game) initContainer()  {
-	for w := 0; w < g.weight; w++ {
-		g.container[w] = make([]int, g.height)
-		for h := 0; h < g.height; h++ {
-			g.container[w][h] = 0
-		}
-	}
-}
-
-func (g *Game) display() {
-	display(g.currScore,g.weight, g.height, g.container)
-}
-
-func (g *Game) lock() func() {
-	g.locker.Lock()
-	return func() {
-		g.locker.Unlock()
+	case common.DirectUp:
+		g.move(g.currBlock.Rotate)
+	case common.DirectDown:
+		g.move(g.currBlock.Down)
+	case common.DirectLeft:
+		g.move(g.currBlock.Left)
+	case common.DirectRight:
+		g.move(g.currBlock.Right)
 	}
 }
 
 func (g *Game) cover(o, s block.Blocks) bool {
 	for _, v := range s {
-		if v.X >= g.weight || v.X < 0 {
+		if v.X >= g.Weight() || v.X < 0 {
 			return true
 		}
-		if v.Y >= g.height || v.Y < 0 {
+		if v.Y >= g.Height() || v.Y < 0 {
 			return true
 		}
 		fn := func(v block.Block) bool {
@@ -125,7 +57,7 @@ func (g *Game) cover(o, s block.Blocks) bool {
 		if fn(v) {
 			continue
 		}
-		if g.container[v.X][v.Y] > 0 {
+		if g.Get(common.NewPos(v.X,v.Y)).Value() > 0 {
 			return true
 		}
 	}
@@ -134,12 +66,12 @@ func (g *Game) cover(o, s block.Blocks) bool {
 }
 func (g *Game) clean(s block.Blocks) {
 	for _, v := range s {
-		g.container[v.X][v.Y] = 0
+		g.Set(common.NewPos(v.X,v.Y),common.P{})
 	}
 }
 func (g *Game) write(s block.Blocks) {
 	for _, v := range s {
-		g.container[v.X][v.Y] = 1
+		g.Set(common.NewPos(v.X,v.Y),PointBlock{})
 	}
 }
 func (g *Game) move(fn func() block.Blocks) bool {
@@ -153,27 +85,15 @@ func (g *Game) move(fn func() block.Blocks) bool {
 	g.write(s)
 	return true
 }
-func (g *Game) rotate() {
-	defer g.lock()()
-	g.move(g.currBlock.Rotate)
-}
-func (g *Game) down() {
-	defer g.lock()()
-	g.move(g.currBlock.Down)
-}
-func (g *Game) left() {
-	defer g.lock()()
-	g.move(g.currBlock.Left)
-}
-func (g *Game) right() {
-	defer g.lock()()
-	g.move(g.currBlock.Right)
 
-}
+
+//
 func (g *Game) HeartbeatEvent() {
-	defer g.lock()()
+	defer g.Lock()()
+
+	g.AddCounter()
 	// 每24帧,移动当前方块往下一格
-	if g.counter%24 == 0 {
+	if g.Counter()%24 == 0 {
 		if !g.move(g.currBlock.Down) {
 			// 方块无法继续下降时,再进行新方块检测
 			if g.checkBlock() {
@@ -183,15 +103,22 @@ func (g *Game) HeartbeatEvent() {
 	}
 	// 消行计算
 	g.calc()
+	// 刷新屏幕
+	g.Display()
+	g.display()
+}
+
+func (g *Game) display() {
+	print(fmt.Sprintf("current score %d \n",g.currScore))
 }
 
 // 计算是否需要消除x行
 func (g *Game) calc() {
-	for h := 0; h < g.height; h++ {
+	for h := 0; h < g.Height(); h++ {
 		fn := func() bool {
 
-			for w := 0; w < g.weight; w++ {
-				if g.container[w][h] == 0 {
+			for w := 0; w < g.Weight(); w++ {
+				if g.Get(common.NewPos(w,h)).Value() == 0 {
 					return false
 				}
 			}
@@ -201,12 +128,12 @@ func (g *Game) calc() {
 		if fn() {
 			g.currScore++
 			// 消除一行,并下移所有方块
-			for hh := h; hh < g.height; hh++ {
-				for ww := 0; ww < g.weight; ww++ {
-					if hh +1 < g.height {
-						g.container[ww][hh] = g.container[ww][hh+1]
+			for hh := h; hh < g.Height(); hh++ {
+				for ww := 0; ww < g.Weight(); ww++ {
+					if hh +1 < g.Height() {
+						g.Set(common.NewPos(ww,hh),g.Get(common.NewPos(ww,hh+1)))
 					}else {
-						g.container[ww][hh] = 0
+						g.Set(common.NewPos(ww,hh),common.P{})
 					}
 				}
 			}
@@ -219,11 +146,11 @@ func (g *Game) calc() {
 
 // 产生新的方块
 func (g *Game) newBlock(){
-	var b = block.NewBlock(g.weight / 2,g.height - 1)
+	var b = block.NewBlock(g.Weight() / 2,g.Height() - 1)
 
 	for _, v := range b.Get() {
-		if g.container[v.X][v.Y] == 1 {
-			g.stopChan <- 1
+		if g.Get(common.NewPos(v.X,v.Y)).Value() == PointBlockValue {
+			g.Stop()
 		}
 	}
 
@@ -251,7 +178,7 @@ func (g *Game) checkBlock() bool{
 			continue
 		}
 		// 检测下方是否存在其他方块
-		if g.container[v.X][v.Y-1] == 1 {
+		if g.Get(common.NewPos(v.X,v.Y)).Value() == PointBlockValue {
 			return true
 		}
 	}
@@ -259,29 +186,3 @@ func (g *Game) checkBlock() bool{
 	return false
 }
 
-func (g *Game) hbSender() {
-	for _ = range time.NewTicker(time.Millisecond * 50).C {
-		g.hbChan <- 1
-	}
-}
-
-func (g *Game) Input(i int) {
-	g.inputChan <- i
-}
-
-func (g *Game) InputUp() {
-	g.inputChan <- 65517
-}
-func (g *Game) InputDown() {
-	g.inputChan <- 65516
-}
-func (g *Game) InputLeft() {
-	g.inputChan <- 65515
-}
-func (g *Game) InputRight() {
-	g.inputChan <- 65514
-}
-
-func (g *Game) Stop() {
-	g.stopChan <- 1
-}
