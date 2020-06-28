@@ -63,7 +63,7 @@ func main() {
 	var g common.Game
 	for {
 		var i int
-		println("Terminal Games \n press '1' start tetris \n press '2' start snake")
+		println("Terminal Games \n enter '1' start tetris \n enter '2' start snake")
 		_,err := fmt.Scanln(&i)
 		if err != nil {
 			continue
