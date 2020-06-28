@@ -53,6 +53,19 @@ func NewGame() *Game {
 	return g
 }
 
+func (g *Game) InputEvent(i int) {
+	switch i {
+	case 65517:
+		g.rotate()
+	case 65516:
+		g.down()
+	case 65515:
+		g.left()
+	case 65514:
+		g.right()
+	}
+}
+
 func (g *Game) Run() {
 	go g.hbSender()
 	for {
@@ -61,21 +74,12 @@ func (g *Game) Run() {
 			return
 		case i := <-g.inputChan:
 			// 移动当前方块位置
-			switch i {
-			case 65517:
-				g.rotate()
-			case 65516:
-				g.down()
-			case 65515:
-				g.left()
-			case 65514:
-				g.right()
-			}
+			g.InputEvent(i)
 		case <-g.hbChan:
 			// 移动位置,计算积分
 			// 刷新屏幕
 			g.counter++
-			g.hb()
+			g.HeartbeatEvent()
 			g.display()
 		}
 	}
@@ -166,7 +170,7 @@ func (g *Game) right() {
 	g.move(g.currBlock.Right)
 
 }
-func (g *Game) hb() {
+func (g *Game) HeartbeatEvent() {
 	defer g.lock()()
 	// 每24帧,移动当前方块往下一格
 	if g.counter%24 == 0 {

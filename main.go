@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func inputFromTermbox(g common.Game) (err error) {
+func inputFromTermbox(m *common.Manager) (err error) {
 	err = termbox.Init()
 	if err != nil {
 		return
@@ -24,25 +24,25 @@ func inputFromTermbox(g common.Game) (err error) {
 			case 0:
 				switch ev.Ch {
 				case 'w','W':
-					g.Input(65517)
+					m.Input(common.DirectUp)
 				case 's','S':
-					g.Input(65516)
+					m.Input(common.DirectDown)
 				case 'a','A':
-					g.Input(65515)
+					m.Input(common.DirectLeft)
 				case 'd','D':
-					g.Input(65514)
+					m.Input(common.DirectRight)
 				}
 			case termbox.KeyEsc:
-				g.Stop()
+				m.Stop()
 				return
 			case termbox.KeyArrowUp,termbox.KeyCtrlW:
-				g.Input(65517)
+				m.Input(common.DirectUp)
 			case termbox.KeyArrowDown,termbox.KeyCtrlS:
-				g.Input(65516)
+				m.Input(common.DirectDown)
 			case termbox.KeyArrowLeft,termbox.KeyCtrlA:
-				g.Input(65515)
+				m.Input(common.DirectLeft)
 			case termbox.KeyArrowRight,termbox.KeyCtrlD:
-				g.Input(65514)
+				m.Input(common.DirectRight)
 			default:
 				continue
 			}
@@ -58,8 +58,9 @@ func main() {
 			println(r)
 		}
 	}()
-	var g common.Game
 	for {
+		m := common.NewManager()
+		var g common.Game
 		var i int
 		println("Terminal Games \n enter '1' start tetris \n enter '2' start snake")
 		_,err := fmt.Scanln(&i)
@@ -75,10 +76,9 @@ func main() {
 			return
 		}
 
+		go m.Run(g)
 
-		go g.Run()
-
-		println(inputFromTermbox(g))
+		println(inputFromTermbox(m))
 	}
 
 }
