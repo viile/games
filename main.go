@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/nsf/termbox-go"
 	"github.com/viile/games/common"
 	"github.com/viile/games/snake"
+	"github.com/viile/games/tetris"
+
 	//"github.com/viile/games/tetris"
 	"math/rand"
 	"time"
@@ -57,10 +60,27 @@ func main() {
 			println(r)
 		}
 	}()
+	var g common.Game
+	for {
+		var i int
+		println("Terminal Games \n press '1' start tetris \n press '2' start snake")
+		_,err := fmt.Scanln(&i)
+		if err != nil {
+			continue
+		}
+		switch i {
+		case 1:
+			g = tetris.NewGame()
+		case 2:
+			g = snake.NewGame()
+		default:
+			return
+		}
 
-	g := snake.NewGame()
-	go g.Run()
 
-	println(inputFromTermbox(g))
+		go g.Run()
+
+		println(inputFromTermbox(g))
+	}
 
 }
