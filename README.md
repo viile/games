@@ -10,7 +10,7 @@ some games running on the terminal Implemented with golang
 # 执行(Run)
 > ./games
 
-# tetris
+# 俄罗斯方块(tetris)
 ![example](./docs/tetris.png)
 * 按[w]或[方向键上] 旋转方块 (press [w] or [ArrowUp] to spin )
 * 按[s]或[方向键下] 加速下落方块 (press [s] or [ArrowDown] to quick down )
@@ -19,7 +19,7 @@ some games running on the terminal Implemented with golang
 * 按esc 退出游戏 (press [esc] to exit game)
 [![运行效果](https://asciinema.org/a/MlA8Q9K4deRmLzYImUjfMHXAT.png)](https://asciinema.org/a/MlA8Q9K4deRmLzYImUjfMHXAT)
 
-# snake
+# 贪吃蛇(snake)
 ![example](./docs/snake.png)
 * 按[w]或[方向键上] 向上移动 (press [w] or [ArrowUp] to up )
 * 按[s]或[方向键下] 向下移动 (press [s] or [ArrowDown] to down )
