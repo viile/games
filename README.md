@@ -4,10 +4,10 @@ golang实现的运行在终端上的小游戏合集
 
 some games running on the terminal Implemented with golang
 
-#安装(INSTALLING)
+# 安装(INSTALLING)
 > go install github.com/viile/games
 
-#执行(Run)
+# 执行(Run)
 > ./games
 
 # tetris
