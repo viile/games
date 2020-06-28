@@ -9,6 +9,8 @@ type Game interface {
 	Run()
 	Stop()
 	Input(i int)
+	InputEvent()
+	HeartbeatEvent()
 }
 
 type G struct {
@@ -18,21 +20,21 @@ type G struct {
 	weight int
 	// 屏幕容器
 	container map[int][]int
-	// 帧数总计
+	// 心跳总计
 	counter int
-	//
-	heartbeat int
-	// 按键输入
+	// 刷新间隔,建议50ms
+	heartbeat time.Duration
+	// 按键输入事件
 	inputChan chan int
-	// 心跳
+	// 心跳事件
 	hbChan chan int
-	// 停止
+	// 停止事件
 	stopChan chan int
 	// locker
 	locker sync.Mutex
 }
 
-func NewG(w,h,hb int) *G{
+func NewG(w,h int,hb time.Duration) *G{
 	g := &G{
 		height:    w,
 		weight:    h,
@@ -56,14 +58,22 @@ func (g *G) initContainer()  {
 	}
 }
 
-func (g *G) hbSender() {
-	for _ = range time.NewTicker(time.Millisecond * time.Duration(g.heartbeat)).C {
-		g.hbChan <- 1
-	}
+func (g *G) Stop() {
+	g.stopChan <- 1
 }
 
 func (g *G) Input(i int) {
 	g.inputChan <- i
+}
+
+func (g *G) HeartbeatEvent(){
+	g.counter++
+}
+
+func (g *G) hbSender() {
+	for _ = range time.NewTicker(time.Millisecond * g.heartbeat).C {
+		g.hbChan <- 1
+	}
 }
 
 func (g *G) Run() {
@@ -72,14 +82,11 @@ func (g *G) Run() {
 		select {
 		case <-g.stopChan:
 			return
-		case <-g.inputChan:
+		case i := <-g.inputChan:
+			g.Input(i)
 		case <-g.hbChan:
-			g.counter++
+			g.HeartbeatEvent()
 		}
 	}
 
-}
-
-func (g *G) Stop() {
-	g.stopChan <- 1
 }

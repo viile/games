@@ -203,11 +203,7 @@ func (g *Game) Run() {
 				g.right()
 			}
 		case <-g.hbChan:
-			// 移动位置,计算积分
-			// 刷新屏幕
-			g.counter++
-			g.hb()
-			g.display()
+			g.HeartbeatEvent()
 		}
 	}
 
@@ -220,12 +216,16 @@ func (g *Game) lock() func() {
 	}
 }
 
-func (g *Game) hb() {
+// 移动位置,计算积分
+// 刷新屏幕
+func (g *Game) HeartbeatEvent() {
 	defer g.lock()()
+	g.counter++
 	// 每24帧,移动一格
 	if g.counter%24 == 0 {
 		g.move()
 	}
+	g.display()
 }
 
 func (g *Game) display() {
