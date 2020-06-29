@@ -97,12 +97,12 @@ func (g *Game) HeartbeatEvent() {
 		if !g.move(g.currBlock.Down) {
 			// 方块无法继续下降时,进行新方块检测
 			if g.checkBlock() {
+				// 消行计算
+				g.calc()
 				g.newBlock()
 			}
 		}
 	}
-	// 消行计算
-	g.calc()
 	// 刷新屏幕
 	g.Display()
 	g.display()
