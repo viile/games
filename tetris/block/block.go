@@ -1,56 +1,69 @@
 package block
 
-import "math/rand"
+import (
+	"github.com/viile/games/common"
+	"math/rand"
+)
 
 const (
-	blockI = iota
-	blockJ
-	blockL
-	blockO
-	blockS
-	blockT
-	blockZ
+	BlockZero = iota
+	BlockIValue
+	BlockJValue
+	BlockLValue
+	BlockOValue
+	BlockSValue
+	BlockTValue
+	BlockZValue
 )
 
 type Block struct {
-	X, Y     int
+	common.Pos
 	IsOrigin bool
 }
 
-func (b *Block) Move(x, y int) Block {
-	return Block{b.X + x, b.Y + y, b.IsOrigin}
+func NewBlock(x, y int,o bool) Block{
+	return Block{common.Pos{x, y},o}
 }
-func (b *Block) Set(x, y int) Block {
-	return Block{x, y, b.IsOrigin}
+
+func (b Block) Move(x, y int) Block {
+	return Block{common.Pos{b.X + x, b.Y + y},b.IsOrigin}
+}
+func (b Block) Set(x, y int) Block {
+	return Block{common.Pos{x, y},b.IsOrigin}
 }
 
 type Blocks []Block
+
+func (b Blocks) Origin() Block {
+	for _,v := range b {
+		if v.IsOrigin {
+			return v
+		}
+	}
+
+	return NewBlock(b[0].X,b[0].Y,true)
+}
+
 type Tran func(Block) Block
 
-func (s Blocks) Handle(t Tran) Blocks {
+func Handle(s Blocks,t Tran) Blocks {
 	bps := make(Blocks, len(s))
 	for k, v := range s {
 		bps[k] = t(v)
 	}
 	return bps
 }
-func (s Blocks) Origin() Block {
-	for _, v := range s {
-		if v.IsOrigin {
-			return v
-		}
-	}
-
-	return Block{s[0].X,s[0].Y,true}
-}
 
 type Tetris interface {
 	Get() Blocks
+	//GetOriginPoint() Block
 	Set(Blocks)
 	Rotate() Blocks
 	Left() Blocks
 	Right() Blocks
 	Down() Blocks
+	Render() string
+	Value() int
 }
 
 type Te struct {
@@ -70,39 +83,45 @@ func (b *Te) Rotate() Blocks {
 }
 
 func (b *Te) Left() Blocks {
-	return b.Handle(func(v Block) Block {
+	return Handle(b.Get(),func(v Block) Block {
 		return v.Move(-1, 0)
 	})
 }
 
 func (b *Te) Right() Blocks {
-	return b.Handle(func(v Block) Block {
+	return Handle(b.Get(),func(v Block) Block {
 		return v.Move(1, 0)
 	})
 }
 
 func (b *Te) Down() Blocks {
-	return b.Handle(func(v Block) Block {
+	return Handle(b.Get(),func(v Block) Block {
 		return v.Move(0, -1)
 	})
 }
+func (b *Te) Value() int {
+	return 0
+}
+func (b *Te) Render() string {
+	return ""
+}
 
-func NewBlock(w,h int) Tetris {
+func NewTetrisBlock(w,h int) Tetris {
 	var b Tetris
-	switch rand.Int31n(7) {
-	case blockI:
+	switch rand.Int31n(7) + 1 {
+	case BlockIValue:
 		b = NewBlockI(w,h)
-	case blockJ:
+	case BlockJValue:
 		b = NewBlockJ(w,h)
-	case blockL:
+	case BlockLValue:
 		b = NewBlockL(w,h)
-	case blockO:
+	case BlockOValue:
 		b = NewBlockO(w,h)
-	case blockS:
+	case BlockSValue:
 		b = NewBlockS(w,h)
-	case blockT:
+	case BlockTValue:
 		b = NewBlockT(w,h)
-	case blockZ:
+	case BlockZValue:
 		b = NewBlockZ(w,h)
 	default:
 		b = NewBlockI(w,h)

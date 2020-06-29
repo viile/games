@@ -5,9 +5,16 @@ type BlockO struct {
 }
 
 func NewBlockO(w,h int) *BlockO {
-	return &BlockO{Te{[]Block{
-		{w, h, true},
-		{w + 1, h, false},
-		{w , h-1, false},
-		{w + 1, h-1, false}}}}
+	return &BlockO{Te{Blocks{
+		NewBlock(w, h, true),
+		NewBlock( w+ 1, h, false),
+		NewBlock( w, h-1, false),
+		NewBlock( w+ 1, h-1, false)}}}
+}
+
+func (b *BlockO) Value() int {
+	return BlockOValue
+}
+func (b *BlockO) Render() string {
+	return "🟩"
 }

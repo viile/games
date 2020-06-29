@@ -71,7 +71,7 @@ func (g *Game) clean(s block.Blocks) {
 }
 func (g *Game) write(s block.Blocks) {
 	for _, v := range s {
-		g.Set(common.NewPos(v.X,v.Y),PointBlock{})
+		g.Set(common.NewPos(v.X,v.Y),g.currBlock)
 	}
 }
 func (g *Game) move(fn func() block.Blocks) bool {
@@ -95,14 +95,15 @@ func (g *Game) HeartbeatEvent() {
 	// 每24帧,移动当前方块往下一格
 	if g.Counter()%24 == 0 {
 		if !g.move(g.currBlock.Down) {
-			// 方块无法继续下降时,再进行新方块检测
+			// 方块无法继续下降时
 			if g.checkBlock() {
+				// 消行计算
+				g.calc()
+				// 新方块计算
 				g.newBlock()
 			}
 		}
 	}
-	// 消行计算
-	g.calc()
 	// 刷新屏幕
 	g.Display()
 	g.display()
@@ -146,11 +147,12 @@ func (g *Game) calc() {
 
 // 产生新的方块
 func (g *Game) newBlock(){
-	var b = block.NewBlock(g.Weight() / 2,g.Height() - 1)
+	var b = block.NewTetrisBlock(g.Weight() / 2,g.Height() - 1)
 
 	for _, v := range b.Get() {
-		if g.Get(common.NewPos(v.X,v.Y)).Value() == PointBlockValue {
+		if g.Get(v.Pos).Value() > block.BlockZero {
 			g.Stop()
+			return
 		}
 	}
 
@@ -162,7 +164,7 @@ func (g *Game) checkBlock() bool{
 	c := g.currBlock.Get()
 	for _,v := range c {
 		// 检测下方是否是边界
-		if v.Y -1 < 0 {
+		if v.Y <= 0 {
 			return true
 		}
 		// 检测下方是否是方块内部
@@ -178,7 +180,7 @@ func (g *Game) checkBlock() bool{
 			continue
 		}
 		// 检测下方是否存在其他方块
-		if g.Get(common.NewPos(v.X,v.Y)).Value() == PointBlockValue {
+		if g.Get(v.Pos).Value() > block.BlockZero {
 			return true
 		}
 	}
