@@ -95,10 +95,11 @@ func (g *Game) HeartbeatEvent() {
 	// 每24帧,移动当前方块往下一格
 	if g.Counter()%24 == 0 {
 		if !g.move(g.currBlock.Down) {
-			// 方块无法继续下降时,进行新方块检测
+			// 方块无法继续下降时
 			if g.checkBlock() {
 				// 消行计算
 				g.calc()
+				// 新方块计算
 				g.newBlock()
 			}
 		}
