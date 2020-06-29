@@ -15,11 +15,18 @@ type BlockT struct {
 // ▓▓▓▓▓▓   ▓▓▓▓     ▓▓    ▓▓▓▓
 //          ▓▓               ▓▓
 func NewBlockT(w,h int) *BlockT {
-	return &BlockT{Te{[]Block{
-		Block{w, h, true},
-		{w - 1, h-1, false},
-		{w , h-1, false},
-		{w + 1, h-1, false}}}}
+	return &BlockT{Te{Blocks{
+		NewBlock(w, h, true),
+		NewBlock( w- 1, h-1, false),
+		NewBlock( w, h-1, false),
+		NewBlock( w+ 1, h-1, false)}}}
+}
+
+func (b *BlockT) Value() int {
+	return BlockTValue
+}
+func (b *BlockT) Render() string {
+	return "🟪"
 }
 
 func (b *BlockT) status() int {
@@ -80,40 +87,40 @@ func (b *BlockT) isl() bool {
 func (b *BlockT) br() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
-	bps[0] = Block{o.X,o.Y,true}
-	bps[1] = Block{o.X-1,o.Y + 1,false}
-	bps[2] = Block{o.X-1,o.Y,false}
-	bps[3] = Block{o.X-1,o.Y - 1,false}
+	bps[0] = NewBlock(o.X,o.Y,true)
+	bps[1] = NewBlock(o.X-1,o.Y + 1,false)
+	bps[2] = NewBlock(o.X-1,o.Y,false)
+	bps[3] = NewBlock(o.X-1,o.Y - 1,false)
 	return bps
 }
 
 func (b *BlockT) bd() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
-	bps[0] = Block{o.X,o.Y,true}
-	bps[1] = Block{o.X + 1,o.Y+1,false}
-	bps[2] = Block{o.X,o.Y+1,false}
-	bps[3] = Block{o.X - 1,o.Y+1,false}
+	bps[0] = NewBlock(o.X,o.Y,true)
+	bps[1] = NewBlock(o.X + 1,o.Y+1,false)
+	bps[2] = NewBlock(o.X,o.Y+1,false)
+	bps[3] = NewBlock(o.X - 1,o.Y+1,false)
 	return bps
 }
 
 func (b *BlockT) bl() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
-	bps[0] = Block{o.X,o.Y,true}
-	bps[1] = Block{o.X+1,o.Y+1,false}
-	bps[2] = Block{o.X+1,o.Y,false}
-	bps[3] = Block{o.X+1,o.Y-1,false}
+	bps[0] = NewBlock(o.X,o.Y,true)
+	bps[1] = NewBlock(o.X+1,o.Y+1,false)
+	bps[2] = NewBlock(o.X+1,o.Y,false)
+	bps[3] = NewBlock(o.X+1,o.Y-1,false)
 	return bps
 }
 
 func (b *BlockT) bu() Blocks {
 	o := b.Origin()
 	bps := make(Blocks, len(b.Blocks))
-	bps[0] = Block{o.X,o.Y,true}
-	bps[1] = Block{o.X - 1,o.Y-1,false}
-	bps[2] = Block{o.X,o.Y-1,false}
-	bps[3] = Block{o.X+1,o.Y-1,false}
+	bps[0] = NewBlock(o.X,o.Y,true)
+	bps[1] = NewBlock(o.X - 1,o.Y-1,false)
+	bps[2] = NewBlock(o.X,o.Y-1,false)
+	bps[3] = NewBlock(o.X+1,o.Y-1,false)
 	return bps
 }
 
