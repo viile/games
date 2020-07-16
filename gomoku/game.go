@@ -42,20 +42,22 @@ func (g *Game) winPoint(p common.Pos, d, v int) (result int) {
 }
 
 func (g *Game) winLine(p common.Pos, l, v int) bool {
-	var result int
-
+	var result int = 1
+	if g.Get(p).Value() != v {
+		return false
+	}
 	switch l {
 	case LinebaiHorizontal:
-		result = g.winPoint(p, common.DirectionLeft, v) + g.winPoint(p, common.DirectionRight, v)
+		result += g.winPoint(p, common.DirectionLeft, v) + g.winPoint(p, common.DirectionRight, v)
 	case LineVertical:
-		result = g.winPoint(p, common.DirectionTop, v) + g.winPoint(p, common.DirectionDown, v)
+		result += g.winPoint(p, common.DirectionTop, v) + g.winPoint(p, common.DirectionDown, v)
 	case LineLeftFalling:
-		result = g.winPoint(p, common.DirectionTopRight, v) + g.winPoint(p, common.DirectionDownRight, v)
+		result += g.winPoint(p, common.DirectionTopRight, v) + g.winPoint(p, common.DirectionDownRight, v)
 	case LineRightFalling:
-		result = g.winPoint(p, common.DirectionTopLeft, v) + g.winPoint(p, common.DirectionDownLeft, v)
+		result += g.winPoint(p, common.DirectionTopLeft, v) + g.winPoint(p, common.DirectionDownLeft, v)
 	}
 
-	if result >= 4 {
+	if result >= 5 {
 		return true
 	}
 
