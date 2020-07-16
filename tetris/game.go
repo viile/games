@@ -27,13 +27,13 @@ func NewGame() *Game {
 func (g *Game) InputEvent(i int) {
 	defer g.Lock()()
 	switch i {
-	case common.DirectUp:
+	case common.Up:
 		g.move(g.currBlock.Rotate)
-	case common.DirectDown:
+	case common.Down:
 		g.move(g.currBlock.Down)
-	case common.DirectLeft:
+	case common.Left:
 		g.move(g.currBlock.Left)
-	case common.DirectRight:
+	case common.Right:
 		g.move(g.currBlock.Right)
 	}
 }

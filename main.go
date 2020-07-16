@@ -25,13 +25,13 @@ func inputFromTermbox(m *common.Manager) (err error) {
 			case 0:
 				switch ev.Ch {
 				case 'w','W':
-					m.Input(common.DirectUp)
+					m.Input(common.Up)
 				case 's','S':
-					m.Input(common.DirectDown)
+					m.Input(common.Down)
 				case 'a','A':
-					m.Input(common.DirectLeft)
+					m.Input(common.Left)
 				case 'd','D':
-					m.Input(common.DirectRight)
+					m.Input(common.Right)
 				}
 			case termbox.KeyEsc:
 				m.Stop()
@@ -40,13 +40,13 @@ func inputFromTermbox(m *common.Manager) (err error) {
 				err = errors.New("CtrlC exit game")
 				return
 			case termbox.KeyArrowUp,termbox.KeyCtrlW:
-				m.Input(common.DirectUp)
+				m.Input(common.Up)
 			case termbox.KeyArrowDown,termbox.KeyCtrlS:
-				m.Input(common.DirectDown)
+				m.Input(common.Down)
 			case termbox.KeyArrowLeft,termbox.KeyCtrlA:
-				m.Input(common.DirectLeft)
+				m.Input(common.Left)
 			case termbox.KeyArrowRight,termbox.KeyCtrlD:
-				m.Input(common.DirectRight)
+				m.Input(common.Right)
 			default:
 				continue
 			}

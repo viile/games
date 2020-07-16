@@ -33,7 +33,7 @@ func (g *Game) newSnake()  {
 	var p = g.CenterPoint()
 	g.snake.PushBack(common.NewPos(p.X+1,p.Y))
 	g.snake.PushFront(common.NewPos(p.X,p.Y))
-	g.currDirect = common.DirectLeft
+	g.currDirect = common.Left
 	for e := g.snake.Front(); e != nil; e = e.Next() {
 		g.Set(e.Value.(common.Pos),PointSnake{})
 	}
@@ -62,13 +62,13 @@ func (g *Game) move() {
 	tail := g.snake.Back()
 	var p common.Pos
 	switch g.currDirect {
-	case common.DirectUp:
+	case common.Up:
 		p = common.NewPos(header.X,header.Y + 1)
-	case common.DirectDown:
+	case common.Down:
 		p = common.NewPos(header.X,header.Y - 1)
-	case common.DirectLeft:
+	case common.Left:
 		p = common.NewPos(header.X - 1,header.Y )
-	case common.DirectRight:
+	case common.Right:
 		p = common.NewPos(header.X + 1,header.Y )
 	}
 	if g.Overflow(p) {
@@ -99,20 +99,20 @@ func (g *Game) InputEvent(i int) {
 	}
 	defer g.Lock()()
 	switch i {
-	case common.DirectUp:
-		if g.currDirect == common.DirectDown {
+	case common.Up:
+		if g.currDirect == common.Down {
 			return
 		}
-	case common.DirectDown:
-		if g.currDirect == common.DirectUp {
+	case common.Down:
+		if g.currDirect == common.Up {
 			return
 		}
-	case common.DirectLeft:
-		if g.currDirect == common.DirectRight {
+	case common.Left:
+		if g.currDirect == common.Right {
 			return
 		}
-	case common.DirectRight:
-		if g.currDirect == common.DirectLeft {
+	case common.Right:
+		if g.currDirect == common.Left {
 			return
 		}
 	}
