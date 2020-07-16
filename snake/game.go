@@ -115,6 +115,8 @@ func (g *Game) InputEvent(i int) {
 		if g.currDirect == common.Left {
 			return
 		}
+	default:
+		return
 	}
 	g.currDirect = i
 	g.lastMoveCounter = g.Counter()

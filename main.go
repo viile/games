@@ -33,6 +33,8 @@ func inputFromTermbox(m *common.Manager) (err error) {
 				case 'd','D':
 					m.Input(common.Right)
 				}
+			case termbox.KeySpace:
+				m.Input(common.Space)
 			case termbox.KeyEsc:
 				m.Stop()
 				return

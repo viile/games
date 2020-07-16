@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+func TestNewGame(t *testing.T) {
+	g := NewGame()
+
+	assert.Equal(t,g.Weight(),g.Height(),"new game")
+}
+
 func TestGameWinPoint(t *testing.T) {
 	g := NewGame()
 	g.Set(common.Pos{0,1},PointBlack{})

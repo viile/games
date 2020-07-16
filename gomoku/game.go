@@ -12,8 +12,19 @@ const (
 	LineRightFalling
 )
 
+const (
+	Status = iota
+	StatusBlackWait
+	StatusWhiteWait
+	StatusStop
+)
+
 type Game struct {
 	*common.G
+	// status
+	status int
+	//
+	currUserRole int
 	//
 	currPoint common.Pos
 }
@@ -23,6 +34,22 @@ func NewGame() *Game {
 		G: common.NewG(15, 15),
 	}
 	return g
+}
+
+func (g *Game) InputEvent(i int) {
+	defer g.Lock()()
+	switch i {
+	case common.Up:
+		g.currPoint = g.currPoint.Top()
+	case common.Down:
+		g.currPoint = g.currPoint.Down()
+	case common.Left:
+		g.currPoint = g.currPoint.Left()
+	case common.Right:
+		g.currPoint = g.currPoint.Right()
+	case common.Space:
+
+	}
 }
 
 func (g *Game) winPoint(p common.Pos, d, v int) (result int) {

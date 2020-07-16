@@ -5,6 +5,7 @@ const (
 	Down  = 65516
 	Left  = 65515
 	Right = 65514
+	Space = 0x20
 )
 
 const (
