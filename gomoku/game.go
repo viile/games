@@ -27,6 +27,8 @@ type Game struct {
 	currUserRole int
 	//
 	currPoint common.Pos
+
+	aiCh chan int
 }
 
 func NewGame(v int) *Game {
@@ -37,10 +39,41 @@ func NewGame(v int) *Game {
 	g.status = StatusWhiteWait
 	g.currPoint = g.CenterPoint()
 	g.Set(g.currPoint,PointCurr{})
-	if g.currUserRole == PointBlackValue {
-		go g.ai()
+	g.aiCh = make(chan int,8)
+	go g.ai()
+	if !g.isUserFirst() {
+		g.aiCh <- 1
 	}
 	return g
+}
+
+func (g *Game) isUserFirst() bool{
+	return g.currUserRole == PointWhiteValue
+}
+
+func (g *Game) swapStatus() {
+	if g.status == StatusWhiteWait {
+		g.status = StatusBlackWait
+		return
+	}
+
+	g.status = StatusWhiteWait
+	return
+}
+
+func (g *Game) space(p common.Pos) {
+	defer g.swapStatus()
+
+	if g.status == StatusWhiteWait {
+		g.Set(p, PointWhite{})
+	}else {
+		g.Set(p, PointBlack{})
+	}
+
+	if g.win(PointWhiteValue) || g.win(PointBlackValue) {
+		g.Stop()
+		return
+	}
 }
 
 func (g *Game) moveCurrPoint(d int) {
@@ -68,16 +101,6 @@ func (g *Game) moveCurrPoint(d int) {
 }
 
 
-func (g *Game) swapStatus() {
-	if g.status == StatusWhiteWait {
-		g.status = StatusBlackWait
-		return
-	}
-
-	g.status = StatusWhiteWait
-	return
-}
-
 func (g *Game) spacePoint() {
 	if (g.currUserRole == PointBlackValue && g.status != StatusBlackWait) ||
 		(g.currUserRole == PointWhiteValue && g.status != StatusWhiteWait){
@@ -86,15 +109,10 @@ func (g *Game) spacePoint() {
 	if g.Get(g.currPoint).Value() > PointCurrValue {
 		return
 	}
-	if g.currUserRole == PointBlackValue {
-		g.Set(g.currPoint, PointBlack{})
-	}else {
-		g.Set(g.currPoint, PointWhite{})
-	}
 
-	g.swapStatus()
+	g.space(g.currPoint)
 
-	go g.ai()
+	g.aiCh <- 1
 
 	return
 }
@@ -119,21 +137,18 @@ func (g *Game) HeartbeatEvent() {
 }
 
 func (g *Game) ai()  {
-	defer g.Lock()()
-	for {
-		p := g.RandPoint()
-		if g.Get(p).Value() > PointCurrValue {
-			continue
+	for _ = range g.aiCh{
+		unlock := g.Lock()
+		for {
+			p := g.RandPoint()
+			if g.Get(p).Value() > PointCurrValue {
+				continue
+			}
+			g.space(p)
+			break
 		}
-		if g.currUserRole == PointBlackValue {
-			g.Set(p, PointWhite{})
-		}else {
-			g.Set(p, PointBlack{})
-		}
-		break
+		unlock()
 	}
-
-	g.swapStatus()
 }
 
 func (g *Game) winPoint(p common.Pos, d, v int) (result int) {
