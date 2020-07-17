@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nsf/termbox-go"
 	"github.com/viile/games/common"
+	"github.com/viile/games/gomoku"
 	"github.com/viile/games/snake"
 	"github.com/viile/games/tetris"
 	"math/rand"
@@ -68,7 +69,12 @@ func main() {
 		m := common.NewManager()
 		var g common.Game
 		var i int
-		println("\033cTerminal Games \n enter '1' start tetris \n enter '2' start snake")
+		println("\033c"+`Terminal Games
+enter '1' start tetris 
+enter '2' start snake 
+enter '3' start gomoku with Black stones
+enter '4' start gomoku with White stones
+`)
 		_,err := fmt.Scanln(&i)
 		if err != nil {
 			continue
@@ -78,6 +84,10 @@ func main() {
 			g = tetris.NewGame()
 		case 2:
 			g = snake.NewGame()
+		case 3:
+			g = gomoku.NewGame(gomoku.PointBlackValue)
+		case 4:
+			g = gomoku.NewGame(gomoku.PointWhiteValue)
 		default:
 			return
 		}
